@@ -29,8 +29,8 @@ int main()
         printf("欢迎下次使用！\n");
         break;
     default:
-        printf("输入错误，请重新输入！\n");
-        scanf("%d", &a);
+        getchar();
+        getchar();
         run_main(head);
         break;
     }

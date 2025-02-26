@@ -43,6 +43,7 @@ FIXPATH = $1
 RM = rm -f
 MD	:= mkdir -p
 endif
+# 编译资源文件
 
 # define any directories containing header files other than /usr/include
 INCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
@@ -54,7 +55,7 @@ LIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
 SOURCES		:= $(wildcard $(patsubst %,%/*.c, $(SOURCEDIRS)))
 
 # define the C object files 
-OBJECTS		:= $(SOURCES:.c=.o)
+OBJECTS		:= $(SOURCES:.c=.o) $(SRC)/resource.o
 
 # define the dependency output files
 DEPS		:= $(OBJECTS:.o=.d)
@@ -86,6 +87,10 @@ $(MAIN): $(OBJECTS)
 # (see the gnu make manual section about automatic variables)
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c -MMD $<  -o $@
+
+# generate resource.o from resource.rc
+$(SRC)/resource.o: $(SRC)/resource.rc $(SRC)/icon.ico
+	windres -I$(SRC) -o $@ $<
 
 .PHONY: clean
 clean:

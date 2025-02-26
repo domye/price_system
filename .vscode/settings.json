@@ -6,6 +6,7 @@
     "lian.h": "c",
     "cstdlib": "c",
     "stdlib.h": "c",
-    "string.h": "c"
+    "string.h": "c",
+    "typeinfo": "c"
   }
 }

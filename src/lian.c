@@ -5,16 +5,18 @@ goods *disk_init()
     goods *p = (goods *)malloc(sizeof(goods));
     p->num = 0;
     p->price = 0;
+    p->name = NULL;
     p->next = NULL;
     return p;
 }
 
 // 添加商品
-void add_good(goods *p, double num, double price)
+void add_good(goods *p, char *name, double num, double price)
 {
     goods *q = (goods *)malloc(sizeof(goods));
     q->num = num;
     q->price = price;
+    q->name = name;
     q->next = p->next;
     p->next = q;
 }
@@ -22,19 +24,30 @@ void add_good(goods *p, double num, double price)
 // 列出商品信息
 void list_good(goods *p)
 {
-    int i = 0;
+    int i = 1;
     while (p->next != NULL)
     {
-        printf("商品编号：%d,商品单量：%lf,商品价格：%lf\n", i, p->next->num, p->next->price);
+        printf("商品编号：%d,商品名称：%s,商品单量：%lf,商品价格：%lf\n", i, p->next->name, p->next->num, p->next->price);
         p = p->next;
         i++;
     }
 }
 
+// 计算个数
+int count_good(goods *p)
+{
+    int tmp = 0;
+    while (p->next != NULL)
+    {
+        tmp++;
+        p = p->next;
+    }
+    return tmp;
+}
 // 删除商品
 void del_good(goods *p, int count)
 {
-    int i = 0;
+    int i = 1;
     while (p->next != NULL && i < count)
     {
         i++;
@@ -73,7 +86,7 @@ void bi_max(goods *p)
 
     if (max_good != NULL)
     {
-        printf("最高性价比商品：单价 %.2lf，单量 %lf，性价比值 %.2f\n", max_good->price, max_good->num, max_good->bi);
+        printf("最高性价比商品：名称 %s，总价 %.2lf，总量 %.2lf，性价比值 %.2f\n", max_good->name, max_good->price, max_good->num, max_good->bi);
     }
 }
 
@@ -116,8 +129,8 @@ void run_main(goods *p)
         printf("欢迎下次使用！\n");
         break;
     default:
-        printf("输入错误，请重新输入！\n");
-        scanf("%d", &a);
+        getchar();
+        getchar();
         run_main(p);
         break;
     }
@@ -127,7 +140,12 @@ void run_1(goods *p)
 {
     system("cls");
     double num, price;
+    char *name;
     // 判断总量输入
+    printf("请输入商品名称：");
+    name = (char *)malloc(100 * sizeof(char));
+    scanf("%s", name);
+
     printf("请输入该商品总量：");
     while (scanf("%lf", &num) != 1 || num <= 0)
     {
@@ -136,7 +154,7 @@ void run_1(goods *p)
             ; // 清空输入缓冲区
     }
 
-    printf("请输入该商品单价：");
+    printf("请输入该商品总价：");
 
     // 判断单价输入
     while (scanf("%lf", &price) != 1 || price <= 0)
@@ -146,7 +164,7 @@ void run_1(goods *p)
             ; // 清空输入缓冲区
     }
 
-    add_good(p, num, price);
+    add_good(p, name, num, price);
     system("cls");
     printf("已添加商品\n按回车返回主菜单\n");
     getchar();
@@ -166,11 +184,21 @@ void run_2(goods *p)
 void run_3(goods *p)
 {
     system("cls");
-    printf("请输入要删除的商品编号\n");
-    int count;
-    while (scanf("%d", &count) != 1 || count <= 0)
+    list_good(p);
+    int sum = count_good(p);
+    printf("共有%d件商品\n请输入要删除的商品编号\n", sum);
+    if (sum == 0)
     {
-        printf("输入错误，请重新输入！\n");
+        printf("没有商品可以删除！\n");
+        getchar();
+        getchar();
+        run_main(p);
+        return;
+    }
+    int count;
+    while (scanf("%d", &count) != 1 || count <= 0 || count > sum)
+    {
+        printf("输入错误，请重新输入: ");
         while (getchar() != '\n')
             ; // 清空输入缓冲区
     }
@@ -191,5 +219,3 @@ void run_4(goods *p)
     getchar();
     run_main(p);
 }
-// 解决中文乱码问题
-#pragma execution_character_set("utf-8")
